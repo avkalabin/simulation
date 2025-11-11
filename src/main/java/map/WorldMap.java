@@ -1,26 +1,26 @@
 package map;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import entity.Entity;
 
-import java.util.HashMap;
-import java.util.List;
-
-public class Map {
-    private final int row;
-    private final int column;
+public class WorldMap {
+    private final int height;
+    private final int width;
     private final HashMap<Coordinates, Entity> entities = new HashMap<>();
 
-    public int getRow() {
-        return row;
+    public WorldMap(int height, int column) {
+        this.height = height;
+        this.width = column;
+    }
+    public int getHeight() {
+        return height;
     }
 
-    public int getColumn() {
-        return column;
-    }
-
-    public Map(int row, int column) {
-        this.row = row;
-        this.column = column;
+    public int getWidth() {
+        return width;
     }
 
     public void put(Coordinates coordinates, Entity entity) {
@@ -36,17 +36,15 @@ public class Map {
     }
 
     public boolean isOutOfBounds(Coordinates coordinates) {
-        return (coordinates.row() < 0 || coordinates.row() >= row) || (coordinates.column() < 0 || coordinates.column() >= column);
+        return (coordinates.row() < 0 || coordinates.row() >= height) || (coordinates.column() < 0 || coordinates.column() >= width);
     }
 
     public void removeEntity(Coordinates coordinates) {
         entities.remove(coordinates);
     }
 
-    List<Coordinates> getAvailableMoves(){
-        List<Coordinates> result = List.of();
-        return result;
-
+    public Set<Map.Entry<Coordinates, Entity>> getAllEntities() {
+        return entities.entrySet();
     }
 
 }

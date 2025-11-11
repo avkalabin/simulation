@@ -1,7 +1,7 @@
 package entity;
 
 import map.Coordinates;
-import map.Map;
+import map.WorldMap;
 
 public abstract class Creature extends Entity {
     protected int speed;
@@ -24,5 +24,5 @@ public abstract class Creature extends Entity {
         this.hp = hp;
     }
 
-    public abstract void makeMove(Map map, Coordinates currentPosition);
+    public abstract void makeMove(WorldMap worldMap, Coordinates currentPosition);
 }
