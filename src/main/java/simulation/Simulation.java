@@ -8,6 +8,7 @@ import action.InitAction;
 import action.TurnAction;
 import map.MapRenderer;
 import map.WorldMap;
+import service.InteractionService;
 import service.MovementService;
 
 public class Simulation {
@@ -65,8 +66,9 @@ public class Simulation {
 
     private void setupActions() {
         MovementService movementService = new MovementService();
+        InteractionService interactionService = new InteractionService();
 
-        initActions.add(new InitAction(movementService));
+        initActions.add(new InitAction(movementService, interactionService));
         turnActions.add(new TurnAction());
     }
 

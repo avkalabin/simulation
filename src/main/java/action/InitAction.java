@@ -9,15 +9,18 @@ import entity.Rock;
 import entity.Tree;
 import map.Coordinates;
 import map.WorldMap;
+import service.InteractionService;
 import service.MovementService;
 
 public class InitAction implements Action {
 
     MovementService movementService;
+    InteractionService interactionService;
     public final Random random = new Random();
 
-    public InitAction(MovementService movementService) {
+    public InitAction(MovementService movementService, InteractionService interactionService) {
         this.movementService = movementService;
+        this.interactionService = interactionService;
     }
 
     @Override
@@ -60,7 +63,7 @@ public class InitAction implements Action {
     private void spawnPredators(WorldMap map, int count) {
         for (int i = 0; i < count; i++) {
             Coordinates position = getRandomEmptyCell(map);
-            map.put(position, new Predator(movementService));
+            map.put(position, new Predator(movementService, interactionService));
         }
     }
 
