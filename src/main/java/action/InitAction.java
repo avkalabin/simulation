@@ -56,7 +56,7 @@ public class InitAction implements Action {
     private void spawnHerbivores(WorldMap map, int count) {
         for (int i = 0; i < count; i++) {
             Coordinates position = getRandomEmptyCell(map);
-            map.put(position, new Herbivore(movementService));
+            map.put(position, new Herbivore(movementService, interactionService));
         }
     }
 

@@ -4,12 +4,24 @@ import map.Coordinates;
 import map.WorldMap;
 
 public abstract class Creature extends Entity {
-    protected int speed;
-    protected int hp;
+
+    private final int speed;
+    private int hp;
 
     public Creature(int speed, int hp) {
         this.speed = speed;
         this.hp = hp;
+    }
+
+    public void takeDamage(int damage) {
+        this.hp -= damage;
+        if (this.hp < 0) {
+            this.hp = 0;
+        }
+    }
+
+    public void heal(int hp) {
+        this.hp += hp;
     }
 
     public int getSpeed() {
@@ -18,10 +30,6 @@ public abstract class Creature extends Entity {
 
     public int getHp() {
         return hp;
-    }
-
-    public void setHp(int hp) {
-        this.hp = hp;
     }
 
     public abstract void makeMove(WorldMap worldMap, Coordinates currentPosition);

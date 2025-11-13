@@ -41,8 +41,7 @@ public class Predator extends Creature {
 
         if (targetPos.isPresent()) {
             Coordinates target = targetPos.get();
-            attack(target);
-            System.out.println("Волк нашел цель!");
+            interactionService.attack(map, currentPosition, target);
             return;
         }
 
@@ -52,9 +51,5 @@ public class Predator extends Creature {
             Coordinates randomMove = availableMoves.get(randomIndex);
             movementService.moveEntity(map, currentPosition, randomMove);
         }
-    }
-
-    private void attack(Coordinates target) {
-
     }
 }
