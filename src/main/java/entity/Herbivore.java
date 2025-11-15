@@ -13,7 +13,7 @@ public class Herbivore extends Creature {
 
     private static final int SPEED = 2;
     private static final int HP = 10;
-    private static final int DEFAULT_VISION_RANGE = 6;
+    private static final int DEFAULT_VISION_RANGE = 4;
 
     private final int visionRange;
 

@@ -12,8 +12,7 @@ public class Predator extends Creature {
     private static final int DEFAULT_SPEED = 1;
     private static final int DEFAULT_HP = 15;
     private static final int DEFAULT_ATTACK_POWER = 5;
-    private static final int DEFAULT_ATTACK_RANGE = 1;
-    private static final int DEFAULT_VISION_RANGE = 6;
+    private static final int DEFAULT_VISION_RANGE = 4;
 
     private final int attackPower;
     private final int visionRange;
