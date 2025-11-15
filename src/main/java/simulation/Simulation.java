@@ -3,21 +3,19 @@ package simulation;
 import java.util.ArrayList;
 import java.util.List;
 
-import action.Action;
-import action.InitAction;
-import action.TurnAction;
+import action.IAction;
+import action.InitIAction;
+import action.TurnIAction;
 import map.MapRenderer;
 import map.WorldMap;
-import service.InteractionService;
-import service.MovementService;
-import service.NavigationService;
+import service.*;
 
 public class Simulation {
 
     private final WorldMap map;
     private final MapRenderer renderer;
-    private final List<Action> initActions;
-    private final List<Action> turnActions;
+    private final List<IAction> initIActions;
+    private final List<IAction> turnIActions;
 
     private boolean isRunning;
     private int turnCounter;
@@ -26,8 +24,8 @@ public class Simulation {
     public Simulation(int mapHeight, int mapWidth) {
         this.map = new WorldMap(mapHeight, mapWidth);
         this.renderer = new MapRenderer(map);
-        this.initActions = new ArrayList<>();
-        this.turnActions = new ArrayList<>();
+        this.initIActions = new ArrayList<>();
+        this.turnIActions = new ArrayList<>();
         this.isRunning = false;
         this.turnCounter = 0;
         this.isInitialized = false;
@@ -38,8 +36,8 @@ public class Simulation {
     public void nextTurn() {
         turnCounter++;
         System.out.println("ХОД №" + turnCounter);
-        for (Action action : turnActions) {
-            action.execute(map);
+        for (IAction IAction : turnIActions) {
+            IAction.execute(map);
         }
         renderer.render();
     }
@@ -66,12 +64,12 @@ public class Simulation {
     }
 
     private void setupActions() {
-        MovementService movementService = new MovementService();
-        InteractionService interactionService = new InteractionService();
-        NavigationService navigationService = new NavigationService();
+        IMovementService movementService = new MovementService();
+        IIteractionService interactionService = new InteractionService();
+        INavigationService navigationService = new NavigationService();
 
-        initActions.add(new InitAction(movementService, interactionService, navigationService));
-        turnActions.add(new TurnAction());
+        initIActions.add(new InitIAction(movementService, interactionService, navigationService));
+        turnIActions.add(new TurnIAction());
     }
 
     private void initialize() {
@@ -79,8 +77,8 @@ public class Simulation {
             return;
         }
 
-        for (Action action : initActions) {
-            action.execute(map);
+        for (IAction IAction : initIActions) {
+            IAction.execute(map);
         }
         System.out.println("Начальное состояние: ");
         renderer.render();

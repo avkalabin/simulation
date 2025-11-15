@@ -2,15 +2,31 @@ package entity;
 
 import map.Coordinates;
 import map.WorldMap;
+import service.*;
+
+import java.util.List;
+import java.util.Random;
 
 public abstract class Creature extends Entity {
 
     private final int speed;
     private int hp;
 
-    public Creature(int speed, int hp) {
+    protected final IMovementService movementService;
+    protected final IIteractionService interactionService;
+    protected final INavigationService navigationService;
+    protected static final Random random = new Random();
+
+    public Creature(int speed,
+                    int hp,
+                    IMovementService movementService,
+                    IIteractionService interactionService,
+                    INavigationService navigationService) {
         this.speed = speed;
         this.hp = hp;
+        this.movementService = movementService;
+        this.interactionService = interactionService;
+        this.navigationService = navigationService;
     }
 
     public void takeDamage(int damage) {
@@ -33,4 +49,13 @@ public abstract class Creature extends Entity {
     }
 
     public abstract void makeMove(WorldMap worldMap, Coordinates currentPosition);
+
+    protected void makeRandomMove(WorldMap map, Coordinates currentPosition) {
+        List<Coordinates> availableMoves = navigationService.getAvailableMoves(map, currentPosition, getSpeed());
+        if (!availableMoves.isEmpty()) {
+            int randomIndex = random.nextInt(availableMoves.size());
+            Coordinates randomMove = availableMoves.get(randomIndex);
+            movementService.moveEntity(map, currentPosition, randomMove);
+        }
+    }
 }

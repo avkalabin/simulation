@@ -2,6 +2,6 @@ package action;
 
 import map.WorldMap;
 
-public interface Action {
+public interface IAction {
     void execute (WorldMap map);
 }

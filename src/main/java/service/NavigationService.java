@@ -15,8 +15,9 @@ import map.WorldMap;
 
 import static java.lang.Math.abs;
 
-public class NavigationService {
+public class NavigationService implements INavigationService {
 
+    @Override
     public Optional<Coordinates> findTarget(WorldMap map, Coordinates from, int range, Class<? extends Entity> targetType) {
 
         for (int deltaRow = -range; deltaRow <= range; deltaRow++) {
@@ -45,10 +46,7 @@ public class NavigationService {
         return Optional.empty();
     }
 
-    /**
-     * Находит кратчайший путь к цели используя BFS
-     * Возвращает список координат (без стартовой позиции)
-     */
+    @Override
     public List<Coordinates> findPath(WorldMap map, Coordinates start, Coordinates target, int speed) {
 
         Queue<Coordinates> queue = new LinkedList<>();
@@ -92,10 +90,7 @@ public class NavigationService {
         return Collections.emptyList();
     }
 
-    /**
-     * Получает все доступные клетки в радиусе speed с проверкой препятствий
-     * Используется для случайного движения
-     */
+    @Override
     public List<Coordinates> getAvailableMoves(WorldMap map, Coordinates from, int speed) {
         List<Coordinates> result = new ArrayList<>();
 
@@ -114,7 +109,6 @@ public class NavigationService {
             for (int[] move : moves) {
                 int stepDistance = abs(move[0]) + abs(move[1]);
 
-                // Проверяем, не превысим ли speed
                 if (currentDistance + stepDistance > speed) {
                     continue;
                 }
@@ -131,7 +125,6 @@ public class NavigationService {
                     continue;
                 }
 
-                // Проверяем без target (null), так как случайное движение
                 if (!canMoveTo(map, current, neighbor, null)) {
                     continue;
                 }
@@ -139,7 +132,6 @@ public class NavigationService {
                 visited.put(neighbor, currentDistance + stepDistance);
                 queue.add(neighbor);
 
-                // Добавляем в результат (кроме стартовой позиции)
                 if (!neighbor.equals(from)) {
                     result.add(neighbor);
                 }
@@ -149,10 +141,6 @@ public class NavigationService {
         return result;
     }
 
-    /**
-     * Генерирует массив возможных ходов от 1 до maxDistance клеток
-     * в 4 направлениях (вверх, вниз, влево, вправо)
-     */
     private int[][] generateMoves(int maxDistance) {
         List<int[]> movesList = new ArrayList<>();
 
@@ -166,14 +154,8 @@ public class NavigationService {
         return movesList.toArray(new int[0][]);
     }
 
-    /**
-     * Проверяет, может ли существо переместиться из from в to
-     * Для прыжков на несколько клеток проверяет все промежуточные клетки
-     * target может быть null для обычного движения
-     */
     private boolean canMoveTo(WorldMap map, Coordinates from, Coordinates to, Coordinates target) {
-        // Целевая клетка всегда доступна (даже если на ней стоит объект)
-        boolean isTarget = target != null && to.equals(target);
+        boolean isTarget = to.equals(target);
 
         // Конечная клетка должна быть пустой (кроме случая, когда это цель)
         if (!isTarget && !map.isEmpty(to)) {

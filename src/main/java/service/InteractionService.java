@@ -1,7 +1,5 @@
 package service;
 
-import java.util.Optional;
-
 import entity.Entity;
 import entity.Grass;
 import entity.Herbivore;
@@ -10,10 +8,10 @@ import map.Coordinates;
 import map.WorldMap;
 
 import static entity.Grass.HP_VALUE;
-import static java.lang.Math.abs;
 
-public class InteractionService {
+public class InteractionService implements IIteractionService {
 
+    @Override
     public void attack(WorldMap map, Coordinates attackerPosition, Coordinates targetPosition) {
 
         Entity attackerEntity = map.get(attackerPosition);
@@ -39,6 +37,7 @@ public class InteractionService {
         }
     }
 
+    @Override
     public void eatGrass(WorldMap map, Coordinates herbivorePosition, Coordinates grassPosition) {
 
         Entity herbivoreEntity = map.get(herbivorePosition);
