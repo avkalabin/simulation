@@ -38,7 +38,7 @@ public class InitAction implements Action {
         map.put(new Coordinates(1, 3), new Rock());
         map.put(new Coordinates(2, 3), new Rock());
         map.put(new Coordinates(3, 3), new Rock());
-        map.put(new Coordinates(4, 3), new Rock());
+     //   map.put(new Coordinates(4, 3), new Rock());
         map.put(new Coordinates(5, 3), new Rock());
         map.put(new Coordinates(6, 3), new Rock());
         map.put(new Coordinates(7, 3), new Rock());

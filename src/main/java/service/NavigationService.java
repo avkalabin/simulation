@@ -1,6 +1,5 @@
 package service;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,8 +30,8 @@ public class NavigationService {
                 }
 
                 Coordinates candidate = new Coordinates(
-                    from.row() + deltaRow,
-                    from.column() + deltaCol
+                        from.row() + deltaRow,
+                        from.column() + deltaCol
                 );
                 if (map.isOutOfBounds(candidate)) {
                     continue;
@@ -46,61 +45,181 @@ public class NavigationService {
         return Optional.empty();
     }
 
-
-    public List<Coordinates> findPath(WorldMap map, Coordinates start, Coordinates target, int maxDistance) {
+    /**
+     * Находит кратчайший путь к цели используя BFS
+     * Возвращает список координат (без стартовой позиции)
+     */
+    public List<Coordinates> findPath(WorldMap map, Coordinates start, Coordinates target, int speed) {
 
         Queue<Coordinates> queue = new LinkedList<>();
-        Map<Coordinates, Coordinates> cameFrom = new HashMap<>();
+        Map<Coordinates, Coordinates> parentMap = new HashMap<>();
 
         queue.add(start);
-        cameFrom.put(start, null);
+        parentMap.put(start, null);
+
+        int[][] moves = generateMoves(speed);
 
         while (!queue.isEmpty()) {
             Coordinates current = queue.poll();
+
             if (current.equals(target)) {
-                return reconstructPath(cameFrom, start, target);
+                return reconstructPath(parentMap, start, target);
             }
-            for (Coordinates neighbor : getNeighbors(map, current)) {
-                if (!cameFrom.containsKey(neighbor)) {
-                    queue.add(neighbor);
-                    cameFrom.put(neighbor, current);
+
+            for (int[] move : moves) {
+                int newRow = current.row() + move[0];
+                int newCol = current.column() + move[1];
+
+                Coordinates neighbor = new Coordinates(newRow, newCol);
+
+                if (map.isOutOfBounds(neighbor)) {
+                    continue;
                 }
+
+                if (parentMap.containsKey(neighbor)) {
+                    continue;
+                }
+
+                if (!canMoveTo(map, current, neighbor, target)) {
+                    continue;
+                }
+
+                parentMap.put(neighbor, current);
+                queue.add(neighbor);
             }
         }
+
         return Collections.emptyList();
     }
 
-    private int getDistance(Coordinates from, Coordinates neighbor) {
+    /**
+     * Получает все доступные клетки в радиусе speed с проверкой препятствий
+     * Используется для случайного движения
+     */
+    public List<Coordinates> getAvailableMoves(WorldMap map, Coordinates from, int speed) {
+        List<Coordinates> result = new ArrayList<>();
 
-        return abs(from.row() - neighbor.row()) + abs(from.column() - neighbor.column());
-    }
+        Queue<Coordinates> queue = new LinkedList<>();
+        Map<Coordinates, Integer> visited = new HashMap<>();
 
-    private List<Coordinates> getNeighbors(WorldMap map, Coordinates position) {
-        List<Coordinates> neighbors = new ArrayList<>();
+        queue.add(from);
+        visited.put(from, 0);
 
-        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        int[][] moves = generateMoves(speed);
 
-        for (int[] dir : directions) {
-            Coordinates neighbor = new Coordinates(
-                position.row() + dir[0],
-                position.column() + dir[1]
-            );
+        while (!queue.isEmpty()) {
+            Coordinates current = queue.poll();
+            int currentDistance = visited.get(current);
 
-            if (!map.isOutOfBounds(neighbor) && map.isEmpty(neighbor)) {
-                neighbors.add(neighbor);
+            for (int[] move : moves) {
+                int stepDistance = abs(move[0]) + abs(move[1]);
+
+                // Проверяем, не превысим ли speed
+                if (currentDistance + stepDistance > speed) {
+                    continue;
+                }
+
+                int newRow = current.row() + move[0];
+                int newCol = current.column() + move[1];
+                Coordinates neighbor = new Coordinates(newRow, newCol);
+
+                if (map.isOutOfBounds(neighbor)) {
+                    continue;
+                }
+
+                if (visited.containsKey(neighbor)) {
+                    continue;
+                }
+
+                // Проверяем без target (null), так как случайное движение
+                if (!canMoveTo(map, current, neighbor, null)) {
+                    continue;
+                }
+
+                visited.put(neighbor, currentDistance + stepDistance);
+                queue.add(neighbor);
+
+                // Добавляем в результат (кроме стартовой позиции)
+                if (!neighbor.equals(from)) {
+                    result.add(neighbor);
+                }
             }
         }
-        return neighbors;
+
+        return result;
     }
 
-    private List<Coordinates> reconstructPath(Map<Coordinates, Coordinates> cameFrom, Coordinates start, Coordinates target) {
+    /**
+     * Генерирует массив возможных ходов от 1 до maxDistance клеток
+     * в 4 направлениях (вверх, вниз, влево, вправо)
+     */
+    private int[][] generateMoves(int maxDistance) {
+        List<int[]> movesList = new ArrayList<>();
+
+        for (int distance = 1; distance <= maxDistance; distance++) {
+            movesList.add(new int[]{-distance, 0});  // вверх
+            movesList.add(new int[]{distance, 0});   // вниз
+            movesList.add(new int[]{0, -distance});  // влево
+            movesList.add(new int[]{0, distance});   // вправо
+        }
+
+        return movesList.toArray(new int[0][]);
+    }
+
+    /**
+     * Проверяет, может ли существо переместиться из from в to
+     * Для прыжков на несколько клеток проверяет все промежуточные клетки
+     * target может быть null для обычного движения
+     */
+    private boolean canMoveTo(WorldMap map, Coordinates from, Coordinates to, Coordinates target) {
+        // Целевая клетка всегда доступна (даже если на ней стоит объект)
+        boolean isTarget = target != null && to.equals(target);
+
+        // Конечная клетка должна быть пустой (кроме случая, когда это цель)
+        if (!isTarget && !map.isEmpty(to)) {
+            return false;
+        }
+
+        // Проверяем все промежуточные клетки на пути
+        int rowDiff = to.row() - from.row();
+        int colDiff = to.column() - from.column();
+        int steps = abs(rowDiff) + abs(colDiff);
+
+        // Для прыжков больше 1 клетки проверяем промежуточные
+        if (steps > 1) {
+            int rowStep = rowDiff != 0 ? rowDiff / abs(rowDiff) : 0;
+            int colStep = colDiff != 0 ? colDiff / abs(colDiff) : 0;
+
+            int currentRow = from.row();
+            int currentCol = from.column();
+
+            for (int i = 1; i < steps; i++) {
+                currentRow += rowStep;
+                currentCol += colStep;
+
+                Coordinates intermediate = new Coordinates(currentRow, currentCol);
+
+                if (map.isOutOfBounds(intermediate) || !map.isEmpty(intermediate)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private List<Coordinates> reconstructPath(Map<Coordinates, Coordinates> parentMap,
+                                              Coordinates start,
+                                              Coordinates target) {
 
         List<Coordinates> path = new ArrayList<>();
         Coordinates current = target;
+
         while (current != null && !current.equals(start)) {
             path.add(current);
-            current = cameFrom.get(current);
+            current = parentMap.get(current);
         }
+
         Collections.reverse(path);
         return path;
     }

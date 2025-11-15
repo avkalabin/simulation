@@ -1,23 +1,21 @@
 package entity;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-
 import map.Coordinates;
 import map.WorldMap;
 import service.InteractionService;
 import service.MovementService;
 import service.NavigationService;
 
-import static java.lang.Math.min;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 public class Herbivore extends Creature {
 
     private static final int SPEED = 2;
     private static final int HP = 10;
     private static final int FOOD_RANGE = 1;
-    private static final int DEFAULT_VISION_RANGE = 40;
+    private static final int DEFAULT_VISION_RANGE = 16;
 
     private final int foodRange;
     private final int visionRange;
@@ -52,14 +50,15 @@ public class Herbivore extends Creature {
         if (distantTarget.isPresent()) {
             List<Coordinates> path = navigationService.findPath(map, currentPosition, distantTarget.get(), getSpeed());
             if (!path.isEmpty()) {
-                int steps = min(getSpeed(), path.size());
-                Coordinates nextStep = path.get(steps - 1);
+                // Берем ПЕРВЫЙ шаг из пути (он всегда в пределах досягаемости BFS)
+                Coordinates nextStep = path.getFirst();
                 movementService.moveEntity(map, currentPosition, nextStep);
                 return;
             }
         }
 
-        List<Coordinates> availableMoves = movementService.getAvailableMoves(map, currentPosition, getSpeed());
+        // Случайное движение - используем NavigationService вместо MovementService
+        List<Coordinates> availableMoves = navigationService.getAvailableMoves(map, currentPosition, getSpeed());
         if (!availableMoves.isEmpty()) {
             int randomIndex = random.nextInt(availableMoves.size());
             Coordinates randomMove = availableMoves.get(randomIndex);

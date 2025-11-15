@@ -18,7 +18,7 @@ public class Predator extends Creature {
     private static final int DEFAULT_HP = 15;
     private static final int DEFAULT_ATTACK_POWER = 5;
     private static final int DEFAULT_ATTACK_RANGE = 1;
-    private static final int DEFAULT_VISION_RANGE = 3;
+    private static final int DEFAULT_VISION_RANGE = 6;
 
     private final int attackPower;
     private final int attackRange;
@@ -65,7 +65,7 @@ public class Predator extends Creature {
             }
         }
 
-        List<Coordinates> availableMoves = movementService.getAvailableMoves(map, currentPosition, getSpeed());
+        List<Coordinates> availableMoves = navigationService.getAvailableMoves(map, currentPosition, getSpeed());
         if (!availableMoves.isEmpty()) {
             int randomIndex = random.nextInt(availableMoves.size());
             Coordinates randomMove = availableMoves.get(randomIndex);
