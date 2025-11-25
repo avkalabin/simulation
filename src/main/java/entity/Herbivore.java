@@ -2,9 +2,9 @@ package entity;
 
 import map.Coordinates;
 import map.WorldMap;
-import service.IIteractionService;
-import service.IMovementService;
-import service.INavigationService;
+import service.InteractionService;
+import service.MovementService;
+import service.NavigationService;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,9 +17,9 @@ public class Herbivore extends Creature {
 
     private final int visionRange;
 
-    public Herbivore(IMovementService movementService,
-                     IIteractionService interactionService,
-                     INavigationService navigationService) {
+    public Herbivore(MovementService movementService,
+                     InteractionService interactionService,
+                     NavigationService navigationService) {
         super(SPEED, HP, movementService, interactionService, navigationService);
         this.visionRange = DEFAULT_VISION_RANGE;
     }

@@ -17,9 +17,9 @@ public class Predator extends Creature {
     private final int attackPower;
     private final int visionRange;
 
-    public Predator(IMovementService movementService,
-                    IIteractionService interactionService,
-                    INavigationService navigationService) {
+    public Predator(MovementService movementService,
+                    InteractionService interactionService,
+                    NavigationService navigationService) {
         super(DEFAULT_SPEED, DEFAULT_HP, movementService, interactionService, navigationService);
 
         this.attackPower = DEFAULT_ATTACK_POWER;

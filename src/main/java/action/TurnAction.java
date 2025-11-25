@@ -9,7 +9,7 @@ import entity.Entity;
 import map.Coordinates;
 import map.WorldMap;
 
-public class TurnIAction implements IAction {
+public class TurnAction implements Action {
 
     @Override
     public void execute(WorldMap map) {

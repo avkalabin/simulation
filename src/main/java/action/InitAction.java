@@ -8,16 +8,16 @@ import map.Coordinates;
 import map.WorldMap;
 import service.*;
 
-public class InitIAction implements IAction {
-    IMovementService movementService;
-    IIteractionService interactionService;
-    INavigationService navigationService;
+public class InitAction implements Action {
+    MovementService movementService;
+    InteractionService interactionService;
+    NavigationService navigationService;
 
     public final Random random = new Random();
 
-    public InitIAction(IMovementService movementService,
-                       IIteractionService interactionService,
-                       INavigationService navigationService) {
+    public InitAction(MovementService movementService,
+                       InteractionService interactionService,
+                       NavigationService navigationService) {
         this.movementService = movementService;
         this.interactionService = interactionService;
         this.navigationService = navigationService;
