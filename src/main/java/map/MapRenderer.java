@@ -38,7 +38,7 @@ public class MapRenderer {
             case "Grass" -> " 🥕 ";
             case "Rock" -> " ⛰ ";
             case "Tree" -> " 🌳 ";
-            default -> "  ?  ";
+            default -> throw new IllegalArgumentException("Неизвестная сущность: " + entity.getClass().getSimpleName());
         };
     }
 }
