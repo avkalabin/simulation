@@ -7,8 +7,6 @@ import entity.Predator;
 import map.Coordinates;
 import map.WorldMap;
 
-import static entity.Grass.HP_VALUE;
-
 public class InteractionServiceImp implements InteractionService {
 
     @Override
@@ -52,7 +50,7 @@ public class InteractionServiceImp implements InteractionService {
         }
 
         map.removeEntity(grassPosition);
-        herbivore.heal(HP_VALUE);
+        herbivore.heal(Grass.HP_VALUE);
 
         System.out.printf("Заяц съел морковку! HP зайца: %d", herbivore.getHp());
         System.out.println();

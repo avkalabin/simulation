@@ -9,7 +9,7 @@ import entity.Entity;
 public class WorldMap {
     private final int height;
     private final int width;
-    private final HashMap<Coordinates, Entity> entities = new HashMap<>();
+    private final Map<Coordinates, Entity> entities = new HashMap<>();
 
     public WorldMap(int height, int column) {
         this.height = height;
