@@ -2,7 +2,7 @@ package map;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 
 import entity.Entity;
@@ -30,17 +30,13 @@ public class WorldMap {
         entities.put(coordinates, entity);
     }
 
-    public Entity get(Coordinates coordinates) {
-        Entity entity = entities.get(coordinates);
-        if (entity == null) {
-            throw new NoSuchElementException("Сущность не найдена для координат: " + coordinates);
-        }
-        return entity;
+    public Optional<Entity> get(Coordinates coordinates) {
+        return Optional.ofNullable(entities.get(coordinates));
     }
 
     public boolean isEmpty(Coordinates coordinates) {
         if (isOutOfBounds(coordinates)) {
-            throw new IllegalArgumentException("Координаты находятся за пределами карты");
+            throw new IllegalArgumentException("Coordinates are out of map bounds");
         }
         return entities.get(coordinates) == null;
     }
@@ -51,7 +47,7 @@ public class WorldMap {
 
     public void removeEntity(Coordinates coordinates) {
         if (isEmpty(coordinates)){
-            throw new NoSuchElementException("Нет сущности на указанных координатах");
+            throw new IllegalArgumentException("Entity not found for: " + coordinates);
         }
         entities.remove(coordinates);
     }

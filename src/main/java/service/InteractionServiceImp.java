@@ -1,5 +1,7 @@
 package service;
 
+import java.util.Optional;
+
 import entity.Entity;
 import entity.Grass;
 import entity.Herbivore;
@@ -12,14 +14,18 @@ public class InteractionServiceImp implements InteractionService {
     @Override
     public void attack(WorldMap map, Coordinates attackerPosition, Coordinates targetPosition) {
 
-        Entity attackerEntity = map.get(attackerPosition);
-        Entity targetEntity = map.get(targetPosition);
+        Optional<Entity> attackerEntity = map.get(attackerPosition);
+        Optional<Entity> targetEntity = map.get(targetPosition);
 
-        if (!(attackerEntity instanceof Predator predator)) {
+        if (attackerEntity.isEmpty() || targetEntity.isEmpty()) {
             return;
         }
 
-        if (!(targetEntity instanceof Herbivore herbivore)) {
+        if (!(attackerEntity.get() instanceof Predator predator)) {
+            return;
+        }
+
+        if (!(targetEntity.get() instanceof Herbivore herbivore)) {
             return;
         }
 
@@ -38,14 +44,18 @@ public class InteractionServiceImp implements InteractionService {
     @Override
     public void eatGrass(WorldMap map, Coordinates herbivorePosition, Coordinates grassPosition) {
 
-        Entity herbivoreEntity = map.get(herbivorePosition);
-        Entity grassEntity = map.get(grassPosition);
+        Optional<Entity> herbivoreEntity = map.get(herbivorePosition);
+        Optional<Entity>  grassEntity = map.get(grassPosition);
 
-        if (!(herbivoreEntity instanceof Herbivore herbivore)) {
+        if (herbivoreEntity.isEmpty() || grassEntity.isEmpty()) {
             return;
         }
 
-        if (!(grassEntity instanceof Grass)) {
+        if (!(herbivoreEntity.get() instanceof Herbivore herbivore)) {
+            return;
+        }
+
+        if (!(grassEntity.get() instanceof Grass)) {
             return;
         }
 

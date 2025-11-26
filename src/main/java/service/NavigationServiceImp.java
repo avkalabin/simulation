@@ -37,8 +37,8 @@ public class NavigationServiceImp implements NavigationService {
                 if (map.isOutOfBounds(candidate)) {
                     continue;
                 }
-                Entity entity = map.get(candidate);
-                if (targetType.isInstance(entity)) {
+                Optional<Entity> entity = map.get(candidate);
+                if (entity.filter(targetType::isInstance).isPresent()) {
                     return Optional.of(candidate);
                 }
             }
