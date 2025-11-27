@@ -6,6 +6,7 @@ import java.util.List;
 import action.Action;
 import action.InitAction;
 import action.TurnAction;
+import map.ConsoleInteractionCallback;
 import map.MapRenderer;
 import map.WorldMap;
 import service.*;
@@ -64,8 +65,9 @@ public class Simulation {
     }
 
     private void setupActions() {
+        InteractionCallback consoleCallback = new ConsoleInteractionCallback();
         MovementService movementService = new MovementServiceImp();
-        InteractionService interactionService = new InteractionServiceImp();
+        InteractionService interactionService = new InteractionServiceImp(consoleCallback);
         NavigationService navigationService = new NavigationServiceImp();
 
         initActions.add(new InitAction(movementService, interactionService, navigationService));

@@ -32,7 +32,7 @@ public class MapRenderer {
     private String getSymbolForEntity(Entity entity) {
         return switch (entity.getClass().getSimpleName()) {
             case "Predator" -> " 🐺 ";
-            case "Herbivore" -> "🐰 ";
+            case "Herbivore" -> " 🐰 ";
             case "Grass" -> " 🥕 ";
             case "Rock" -> " ⛰ ";
             case "Tree" -> " 🌳 ";

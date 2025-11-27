@@ -11,7 +11,9 @@ public class MovementServiceImp implements MovementService {
     @Override
     public void moveEntity(WorldMap worldMap, Coordinates from, Coordinates to) {
         Optional<Entity> entity = worldMap.get(from);
-        worldMap.removeEntity(from);
+        if (entity.isPresent()) {
+            worldMap.removeEntity(from);
+        }
         worldMap.put(to, entity.orElse(null));
     }
 }

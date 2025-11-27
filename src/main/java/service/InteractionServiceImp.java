@@ -11,6 +11,12 @@ import map.WorldMap;
 
 public class InteractionServiceImp implements InteractionService {
 
+    private final InteractionCallback callback;
+
+    public InteractionServiceImp(InteractionCallback callback) {
+        this.callback = callback;
+    }
+
     @Override
     public void attack(WorldMap map, Coordinates attackerPosition, Coordinates targetPosition) {
 
@@ -32,20 +38,20 @@ public class InteractionServiceImp implements InteractionService {
         int damage = predator.getAttackPower();
         herbivore.takeDamage(damage);
 
-        System.out.printf("Волк атакует! Урон: %d, HP жертвы: %d", damage, herbivore.getHp());
-        System.out.println();
+        boolean isKilled = herbivore.getHp() <= 0;
 
-        if (herbivore.getHp() <= 0) {
+        if (isKilled) {
             map.removeEntity(targetPosition);
-            System.out.println("Зайца сьели!");
         }
+
+        callback.onAttack(damage, herbivore.getHp(), isKilled);
     }
 
     @Override
     public void eatGrass(WorldMap map, Coordinates herbivorePosition, Coordinates grassPosition) {
 
         Optional<Entity> herbivoreEntity = map.get(herbivorePosition);
-        Optional<Entity>  grassEntity = map.get(grassPosition);
+        Optional<Entity> grassEntity = map.get(grassPosition);
 
         if (herbivoreEntity.isEmpty() || grassEntity.isEmpty()) {
             return;
@@ -62,7 +68,6 @@ public class InteractionServiceImp implements InteractionService {
         map.removeEntity(grassPosition);
         herbivore.heal(Grass.HP_VALUE);
 
-        System.out.printf("Заяц съел морковку! HP зайца: %d", herbivore.getHp());
-        System.out.println();
+        callback.onEat(herbivore.getHp());
     }
 }
