@@ -27,8 +27,12 @@ public class Herbivore extends Creature {
     }
 
     @Override
-    public void makeMove(WorldMap map, Coordinates currentPosition) {
-
+    public void makeMove(WorldMap map) {
+        Optional<Coordinates> currentPositionOpt = map.getCoordinates(this);
+        if (currentPositionOpt.isEmpty()) {
+            return;
+        }
+        Coordinates currentPosition = currentPositionOpt.get();
         Optional<Coordinates> target = navigationService.findTarget(map, currentPosition, visionRange, Grass.class);
 
         if (target.isPresent()) {

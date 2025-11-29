@@ -25,10 +25,8 @@ public class TurnAction implements Action {
         }
 
         for (Map.Entry<Coordinates, Creature> entry : creatures) {
-            Coordinates position = entry.getKey();
             Creature creature = entry.getValue();
-
-            creature.makeMove(map, position);
+                creature.makeMove(map);
         }
     }
 }

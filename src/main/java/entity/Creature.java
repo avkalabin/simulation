@@ -45,7 +45,7 @@ public abstract class Creature extends Entity {
         return hp;
     }
 
-    public abstract void makeMove(WorldMap worldMap, Coordinates currentPosition);
+    public abstract void makeMove(WorldMap worldMap);
 
     protected void makeRandomMove(WorldMap map, Coordinates currentPosition) {
         List<Coordinates> availableMoves = navigationService.getAvailableMoves(map, currentPosition, getSpeed());

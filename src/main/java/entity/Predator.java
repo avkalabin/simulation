@@ -32,8 +32,12 @@ public class Predator extends Creature {
     }
 
     @Override
-    public void makeMove(WorldMap map, Coordinates currentPosition) {
-
+    public void makeMove(WorldMap map) {
+        Optional<Coordinates> currentPositionOpt = map.getCoordinates(this);
+        if (currentPositionOpt.isEmpty()) {
+            return;
+        }
+        Coordinates currentPosition = currentPositionOpt.get();
         Optional<Coordinates> distantTarget = navigationService.findTarget(map, currentPosition, visionRange, Herbivore.class);
 
         if (distantTarget.isPresent()) {

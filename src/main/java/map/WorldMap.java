@@ -46,7 +46,7 @@ public class WorldMap {
     }
 
     public void removeEntity(Coordinates coordinates) {
-        if (isEmpty(coordinates)){
+        if (isEmpty(coordinates)) {
             throw new IllegalArgumentException("Entity not found for: " + coordinates);
         }
         entities.remove(coordinates);
@@ -56,4 +56,12 @@ public class WorldMap {
         return entities.entrySet();
     }
 
+    public Optional<Coordinates> getCoordinates(Entity entity) {
+        for (Map.Entry<Coordinates, Entity> entry : entities.entrySet()) {
+            if (entry.getValue().equals(entity)) {
+                return Optional.of(entry.getKey());
+            }
+        }
+        return Optional.empty();
+    }
 }
