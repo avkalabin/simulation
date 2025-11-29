@@ -22,8 +22,8 @@ public class Simulation {
     private int turnCounter;
     private boolean isInitialized;
 
-    public Simulation(int mapHeight, int mapWidth) {
-        this.map = new WorldMap(mapHeight, mapWidth);
+    public Simulation(WorldMap map) {
+        this.map = map;
         this.renderer = new MapRenderer(map);
         this.initActions = new ArrayList<>();
         this.turnActions = new ArrayList<>();
@@ -37,9 +37,7 @@ public class Simulation {
     public void nextTurn() {
         turnCounter++;
         System.out.println("ХОД №" + turnCounter);
-        for (Action action : turnActions) {
-            action.execute(map);
-        }
+        executeActions(turnActions);
         renderer.render();
     }
 
@@ -80,12 +78,17 @@ public class Simulation {
             return;
         }
 
-        for (Action action : initActions) {
-            action.execute(map);
-        }
+        executeActions(initActions);
         System.out.println("Начальное состояние: ");
         renderer.render();
 
         isInitialized = true;
     }
+
+    private void executeActions(List<Action> actions) {
+        for (Action action : actions) {
+            action.execute(map);
+        }
+    }
+
 }

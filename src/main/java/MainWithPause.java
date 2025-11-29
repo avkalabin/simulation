@@ -1,8 +1,9 @@
+import map.WorldMap;
 import simulation.Simulation;
 
 public class MainWithPause {
     public static void main(String[] args) {
-        Simulation simulation = new Simulation(10, 10);
+        Simulation simulation = new Simulation(new WorldMap(10, 10));
 
         // Запуск симуляции
         Thread simulationThread = new Thread(simulation::startSimulation);

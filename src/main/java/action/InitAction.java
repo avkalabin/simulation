@@ -9,6 +9,13 @@ import map.WorldMap;
 import service.*;
 
 public class InitAction implements Action {
+
+    private static final int ROCK_SPAWN_COUNT = 10;
+    private static final int TREE_SPAWN_COUNT = 8;
+    private static final int GRASS_SPAWN_COUNT = 15;
+    private static final int HERBIVORE_SPAWN_COUNT = 5;
+    private static final int PREDATOR_SPAWN_COUNT = 3;
+
     MovementService movementService;
     HerbivoreInteractionService herbivoreInteractionService;
     PredatorInteractionService predatorInteractionService;
@@ -28,11 +35,11 @@ public class InitAction implements Action {
 
     @Override
     public void execute(WorldMap map) {
-        spawnEntity(map, 10, Rock::new);
-        spawnEntity(map, 8, Tree::new);
-        spawnEntity(map, 15, Grass::new);
-        spawnEntity(map, 5, () -> new Herbivore(movementService, herbivoreInteractionService, navigationService));
-        spawnEntity(map, 3, () -> new Predator(movementService, predatorInteractionService, navigationService));
+        spawnEntity(map, ROCK_SPAWN_COUNT, Rock::new);
+        spawnEntity(map, TREE_SPAWN_COUNT, Tree::new);
+        spawnEntity(map, GRASS_SPAWN_COUNT, Grass::new);
+        spawnEntity(map, HERBIVORE_SPAWN_COUNT, () -> new Herbivore(movementService, herbivoreInteractionService, navigationService));
+        spawnEntity(map, PREDATOR_SPAWN_COUNT, () -> new Predator(movementService, predatorInteractionService, navigationService));
     }
 
     private void spawnEntity(WorldMap map, int count, Supplier<Entity> entitySupplier) {
