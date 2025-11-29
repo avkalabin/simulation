@@ -13,19 +13,16 @@ public abstract class Creature extends Entity {
     private int hp;
 
     protected final MovementService movementService;
-    protected final InteractionService interactionService;
     protected final NavigationService navigationService;
     protected static final Random random = new Random();
 
     public Creature(int speed,
                     int hp,
                     MovementService movementService,
-                    InteractionService interactionService,
                     NavigationService navigationService) {
         this.speed = speed;
         this.hp = hp;
         this.movementService = movementService;
-        this.interactionService = interactionService;
         this.navigationService = navigationService;
     }
 

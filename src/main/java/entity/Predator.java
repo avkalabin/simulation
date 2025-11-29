@@ -14,14 +14,15 @@ public class Predator extends Creature {
     private static final int DEFAULT_ATTACK_POWER = 5;
     private static final int DEFAULT_VISION_RANGE = 4;
 
+    private final PredatorInteractionService predatorInteractionService;
     private final int attackPower;
     private final int visionRange;
 
     public Predator(MovementService movementService,
-                    InteractionService interactionService,
+                    PredatorInteractionService predatorInteractionService,
                     NavigationService navigationService) {
-        super(DEFAULT_SPEED, DEFAULT_HP, movementService, interactionService, navigationService);
-
+        super(DEFAULT_SPEED, DEFAULT_HP, movementService, navigationService);
+        this.predatorInteractionService = predatorInteractionService;
         this.attackPower = DEFAULT_ATTACK_POWER;
         this.visionRange = DEFAULT_VISION_RANGE;
     }
@@ -40,7 +41,7 @@ public class Predator extends Creature {
             if (!path.isEmpty()) {
                 Coordinates nextStep = path.getFirst();
                 if (nextStep.equals(distantTarget.get())) {
-                    interactionService.attack(map, currentPosition, distantTarget.get());
+                    predatorInteractionService.attack(map, currentPosition, distantTarget.get());
                     return;
                 }
                 movementService.moveEntity(map, currentPosition, nextStep);

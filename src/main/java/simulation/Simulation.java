@@ -67,10 +67,11 @@ public class Simulation {
     private void setupActions() {
         InteractionCallback consoleCallback = new ConsoleInteractionCallback();
         MovementService movementService = new MovementServiceImp();
-        InteractionService interactionService = new InteractionServiceImp(consoleCallback);
+        HerbivoreInteractionService herbivoreInteractionService = new HerbivoreInteractionServiceImp(consoleCallback);
+        PredatorInteractionService predatorInteractionService = new PredatorInteractionServiceImp(consoleCallback);
         NavigationService navigationService = new NavigationServiceImp();
 
-        initActions.add(new InitAction(movementService, interactionService, navigationService));
+        initActions.add(new InitAction(movementService, herbivoreInteractionService, predatorInteractionService, navigationService));
         turnActions.add(new TurnAction());
     }
 

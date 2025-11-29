@@ -2,7 +2,7 @@ package entity;
 
 import map.Coordinates;
 import map.WorldMap;
-import service.InteractionService;
+import service.HerbivoreInteractionService;
 import service.MovementService;
 import service.NavigationService;
 
@@ -15,13 +15,15 @@ public class Herbivore extends Creature {
     private static final int HP = 10;
     private static final int DEFAULT_VISION_RANGE = 4;
 
+    private final HerbivoreInteractionService herbivoreInteractionService;
     private final int visionRange;
 
     public Herbivore(MovementService movementService,
-                     InteractionService interactionService,
+                     HerbivoreInteractionService herbivoreInteractionService,
                      NavigationService navigationService) {
-        super(SPEED, HP, movementService, interactionService, navigationService);
+        super(SPEED, HP, movementService, navigationService);
         this.visionRange = DEFAULT_VISION_RANGE;
+        this.herbivoreInteractionService = herbivoreInteractionService;
     }
 
     @Override
@@ -34,7 +36,7 @@ public class Herbivore extends Creature {
             if (!path.isEmpty()) {
                 Coordinates nextStep = path.getFirst();
                 if (nextStep.equals(target.get())) {
-                    interactionService.eatGrass(map, currentPosition, nextStep);
+                    herbivoreInteractionService.eatGrass(map, currentPosition, nextStep);
                 }
                 movementService.moveEntity(map, currentPosition, nextStep);
                 return;

@@ -10,16 +10,19 @@ import service.*;
 
 public class InitAction implements Action {
     MovementService movementService;
-    InteractionService interactionService;
+    HerbivoreInteractionService herbivoreInteractionService;
+    PredatorInteractionService predatorInteractionService;
     NavigationService navigationService;
 
     public final Random random = new Random();
 
     public InitAction(MovementService movementService,
-                       InteractionService interactionService,
-                       NavigationService navigationService) {
+                      HerbivoreInteractionService herbivoreInteractionService,
+                      PredatorInteractionService predatorInteractionService,
+                      NavigationService navigationService) {
         this.movementService = movementService;
-        this.interactionService = interactionService;
+        this.herbivoreInteractionService = herbivoreInteractionService;
+        this.predatorInteractionService = predatorInteractionService;
         this.navigationService = navigationService;
     }
 
@@ -28,8 +31,8 @@ public class InitAction implements Action {
         spawnEntity(map, 10, Rock::new);
         spawnEntity(map, 8, Tree::new);
         spawnEntity(map, 15, Grass::new);
-        spawnEntity(map, 5, () -> new Herbivore(movementService, interactionService, navigationService));
-        spawnEntity(map, 3, () -> new Predator(movementService, interactionService, navigationService));
+        spawnEntity(map, 5, () -> new Herbivore(movementService, herbivoreInteractionService, navigationService));
+        spawnEntity(map, 3, () -> new Predator(movementService, predatorInteractionService, navigationService));
     }
 
     private void spawnEntity(WorldMap map, int count, Supplier<Entity> entitySupplier) {
