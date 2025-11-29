@@ -1,61 +1,30 @@
 package service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Queue;
-
 import entity.Entity;
 import map.Coordinates;
 import map.WorldMap;
+
+import java.util.*;
 
 import static java.lang.Math.abs;
 
 public class NavigationServiceImp implements NavigationService {
 
     @Override
-    public Optional<Coordinates> findTarget(WorldMap map, Coordinates from, int range, Class<? extends Entity> targetType) {
+    public List<Coordinates> findPath(WorldMap map, Coordinates start, Class<? extends Entity> targetType, int speed, int vision) {
 
-        for (int deltaRow = -range; deltaRow <= range; deltaRow++) {
-            for (int deltaCol = -range; deltaCol <= range; deltaCol++) {
-                if (deltaRow == 0 && deltaCol == 0) {
-                    continue;
-                }
-                int distance = abs(deltaRow) + abs(deltaCol);
-                if (distance > range) {
-                    continue;
-                }
-
-                Coordinates candidate = new Coordinates(
-                        from.row() + deltaRow,
-                        from.column() + deltaCol
-                );
-                if (map.isOutOfBounds(candidate)) {
-                    continue;
-                }
-                Optional<Entity> entity = map.get(candidate);
-                if (entity.filter(targetType::isInstance).isPresent()) {
-                    return Optional.of(candidate);
-                }
-            }
+        Optional<Coordinates> targetOpt = findTarget(map, start, vision, targetType);
+        if (targetOpt.isEmpty()) {
+            return Collections.emptyList();
         }
-        return Optional.empty();
-    }
-
-    @Override
-    public List<Coordinates> findPath(WorldMap map, Coordinates start, Coordinates target, int speed) {
-
+        Coordinates target = targetOpt.get();
         Queue<Coordinates> queue = new LinkedList<>();
         Map<Coordinates, Coordinates> parentMap = new HashMap<>();
 
         queue.add(start);
         parentMap.put(start, null);
 
-        int[][] moves = generateMoves(speed);
+        List<Coordinates> moves = generateMoves(speed);
 
         while (!queue.isEmpty()) {
             Coordinates current = queue.poll();
@@ -64,9 +33,9 @@ public class NavigationServiceImp implements NavigationService {
                 return reconstructPath(parentMap, start, target);
             }
 
-            for (int[] move : moves) {
-                int newRow = current.row() + move[0];
-                int newCol = current.column() + move[1];
+            for (Coordinates move : moves) {
+                int newRow = current.row() + move.row();
+                int newCol = current.column() + move.column();
 
                 Coordinates neighbor = new Coordinates(newRow, newCol);
 
@@ -100,21 +69,21 @@ public class NavigationServiceImp implements NavigationService {
         queue.add(from);
         visited.put(from, 0);
 
-        int[][] moves = generateMoves(speed);
+        List<Coordinates> moves = generateMoves(speed);
 
         while (!queue.isEmpty()) {
             Coordinates current = queue.poll();
             int currentDistance = visited.get(current);
 
-            for (int[] move : moves) {
-                int stepDistance = abs(move[0]) + abs(move[1]);
+            for (Coordinates move : moves) {
+                int stepDistance = abs(move.row()) + abs(move.column());
 
                 if (currentDistance + stepDistance > speed) {
                     continue;
                 }
 
-                int newRow = current.row() + move[0];
-                int newCol = current.column() + move[1];
+                int newRow = current.row() + move.row();
+                int newCol = current.column() + move.column();
                 Coordinates neighbor = new Coordinates(newRow, newCol);
 
                 if (map.isOutOfBounds(neighbor)) {
@@ -141,17 +110,43 @@ public class NavigationServiceImp implements NavigationService {
         return result;
     }
 
-    private int[][] generateMoves(int maxDistance) {
-        List<int[]> movesList = new ArrayList<>();
+    private Optional<Coordinates> findTarget(WorldMap map, Coordinates from, int range, Class<? extends Entity> targetType) {
 
-        for (int distance = 1; distance <= maxDistance; distance++) {
-            movesList.add(new int[]{-distance, 0});  // вверх
-            movesList.add(new int[]{distance, 0});   // вниз
-            movesList.add(new int[]{0, -distance});  // влево
-            movesList.add(new int[]{0, distance});   // вправо
+        for (int deltaRow = -range; deltaRow <= range; deltaRow++) {
+            for (int deltaCol = -range; deltaCol <= range; deltaCol++) {
+                if (deltaRow == 0 && deltaCol == 0) {
+                    continue;
+                }
+                int distance = abs(deltaRow) + abs(deltaCol);
+                if (distance > range) {
+                    continue;
+                }
+
+                Coordinates candidate = new Coordinates(
+                        from.row() + deltaRow,
+                        from.column() + deltaCol
+                );
+                if (map.isOutOfBounds(candidate)) {
+                    continue;
+                }
+                Optional<Entity> entity = map.get(candidate);
+                if (entity.filter(targetType::isInstance).isPresent()) {
+                    return Optional.of(candidate);
+                }
+            }
         }
+        return Optional.empty();
+    }
 
-        return movesList.toArray(new int[0][]);
+    private List<Coordinates> generateMoves(int maxDistance) {
+        List<Coordinates> movesList = new ArrayList<>();
+        for (int distance = 1; distance <= maxDistance; distance++) {
+            movesList.add(new Coordinates(-distance, 0));  // вверх
+            movesList.add(new Coordinates(distance, 0));   // вниз
+            movesList.add(new Coordinates(0, -distance));  // влево
+            movesList.add(new Coordinates(0, distance));   // вправо
+        }
+        return movesList;
     }
 
     private boolean canMoveTo(WorldMap map, Coordinates from, Coordinates to, Coordinates target) {
@@ -186,7 +181,6 @@ public class NavigationServiceImp implements NavigationService {
                 }
             }
         }
-
         return true;
     }
 

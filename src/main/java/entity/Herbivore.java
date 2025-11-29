@@ -33,19 +33,15 @@ public class Herbivore extends Creature {
             return;
         }
         Coordinates currentPosition = currentPositionOpt.get();
-        Optional<Coordinates> target = navigationService.findTarget(map, currentPosition, visionRange, Grass.class);
-
-        if (target.isPresent()) {
-            List<Coordinates> path = navigationService.findPath(map, currentPosition, target.get(), getSpeed());
+            List<Coordinates> path = navigationService.findPath(map, currentPosition, Grass.class, getSpeed(), visionRange);
             if (!path.isEmpty()) {
                 Coordinates nextStep = path.getFirst();
-                if (nextStep.equals(target.get())) {
+                if (path.size() == 1) {
                     herbivoreInteractionService.eatGrass(map, currentPosition, nextStep);
                 }
                 movementService.moveEntity(map, currentPosition, nextStep);
-                return;
+            } else {
+                makeRandomMove(map, currentPosition);
             }
-        }
-        makeRandomMove(map, currentPosition);
     }
 }
