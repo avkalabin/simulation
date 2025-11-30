@@ -18,19 +18,20 @@ public class NavigationServiceImp implements NavigationService {
             return Collections.emptyList();
         }
         Coordinates target = targetOpt.get();
-        Queue<Coordinates> queue = new LinkedList<>();
-        Map<Coordinates, Coordinates> parentMap = new HashMap<>();
+        Queue<Node> queue = new LinkedList<>();
+        Set<Coordinates> visited = new HashSet<>();
 
-        queue.add(start);
-        parentMap.put(start, null);
+        queue.add(new Node(start, null));
+        visited.add(start);
 
         List<Coordinates> moves = generateMoves(speed);
 
         while (!queue.isEmpty()) {
-            Coordinates current = queue.poll();
+            Node currentNode = queue.poll();
+            Coordinates current = currentNode.coordinates();
 
             if (current.equals(target)) {
-                return reconstructPath(parentMap, start, target);
+                return reconstructPath(currentNode);
             }
 
             for (Coordinates move : moves) {
@@ -43,7 +44,7 @@ public class NavigationServiceImp implements NavigationService {
                     continue;
                 }
 
-                if (parentMap.containsKey(neighbor)) {
+                if (visited.contains(neighbor)) {
                     continue;
                 }
 
@@ -51,11 +52,10 @@ public class NavigationServiceImp implements NavigationService {
                     continue;
                 }
 
-                parentMap.put(neighbor, current);
-                queue.add(neighbor);
+                visited.add(neighbor);
+                queue.add(new Node(neighbor, currentNode));
             }
         }
-
         return Collections.emptyList();
     }
 
@@ -184,19 +184,18 @@ public class NavigationServiceImp implements NavigationService {
         return true;
     }
 
-    private List<Coordinates> reconstructPath(Map<Coordinates, Coordinates> parentMap,
-                                              Coordinates start,
-                                              Coordinates target) {
+    private List<Coordinates> reconstructPath(Node targetNode) {
 
         List<Coordinates> path = new ArrayList<>();
-        Coordinates current = target;
 
-        while (current != null && !current.equals(start)) {
-            path.add(current);
-            current = parentMap.get(current);
+        for (Node node = targetNode; node != null; node = node.parent()) {
+            path.add(node.coordinates());
         }
-
         Collections.reverse(path);
+        path.removeFirst();
         return path;
     }
+}
+
+record Node(Coordinates coordinates, service.Node parent) {
 }

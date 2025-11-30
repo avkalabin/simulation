@@ -39,16 +39,16 @@ public class Predator extends Creature {
         }
         Coordinates currentPosition = currentPositionOpt.get();
 
-            List<Coordinates> path = navigationService.findPath(map, currentPosition,Herbivore.class, getSpeed(), visionRange);
-            if (!path.isEmpty()) {
-                Coordinates nextStep = path.getFirst();
-                if (path.size() == 1) {
-                    predatorInteractionService.attack(map, currentPosition,nextStep);
-                    return;
-                }
-                movementService.moveEntity(map, currentPosition, nextStep);
+        List<Coordinates> path = navigationService.findPath(map, currentPosition, Herbivore.class, getSpeed(), visionRange);
+        if (!path.isEmpty()) {
+            Coordinates nextStep = path.getFirst();
+            if (path.size() == 1) {
+                predatorInteractionService.attack(map, currentPosition, nextStep);
                 return;
             }
-        makeRandomMove(map, currentPosition);
+            movementService.moveEntity(map, currentPosition, nextStep);
+        } else {
+            makeRandomMove(map, currentPosition);
+        }
     }
 }
